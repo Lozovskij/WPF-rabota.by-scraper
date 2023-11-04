@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button Height="30" Content="Scrape" Width="100" VerticalContentAlignment="Center" Padding="5" Margin="25" VerticalAlignment="Top" />
+        <Button Command="{Binding ScrapeCommand}" Height="30" Content="Scrape" Width="100" VerticalContentAlignment="Center" Padding="5" Margin="25" VerticalAlignment="Top" />
     </Grid>
 </Window>
