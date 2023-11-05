@@ -21,6 +21,6 @@ public class MainWindowViewModel
 
     private void Scrape(object obj)
     {
-        Scraper.Scrape();
+        Scraper.GetJobsWithLinks();
     }
 }
