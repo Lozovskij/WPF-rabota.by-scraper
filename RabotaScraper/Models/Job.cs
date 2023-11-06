@@ -1,3 +1,3 @@
 ﻿namespace RabotaScraper.Models;
 
-public record Job (string Title, string Company);
+public record Job (string Title, string Company, string Link);
