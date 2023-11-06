@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RabotaScraper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="500">
     <Grid>
         <Button Command="{Binding ScrapeCommand}" Height="30" Content="Scrape" Width="100" VerticalContentAlignment="Center" Padding="5" Margin="25" VerticalAlignment="Top" />
         <ListView Name="JobsList" ItemsSource="{Binding Jobs}" BorderBrush="#cdcdcd" Margin="25,70,25,25" Padding="0">
@@ -13,7 +13,14 @@
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding Title}" Header="Title"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Company}" Header="Company"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Link}" Header="Link"/>
+                    <GridViewColumn Header="Link">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Open in browser" Command="{Binding OpenLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                CommandParameter="{Binding Link}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
                 </GridView>
             </ListView.View>
