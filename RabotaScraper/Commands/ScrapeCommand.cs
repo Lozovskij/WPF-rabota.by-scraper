@@ -1,19 +1,36 @@
 ﻿using HtmlAgilityPack;
+using RabotaScraper.Models;
+using RabotaScraper.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
-namespace RabotaScraper.Models.Services;
+namespace RabotaScraper.Commands;
 
-public class Scraper
+public class ScrapeCommand : ICommand
 {
+    public event EventHandler? CanExecuteChanged;
+
     // Search by keyword "c#"
     // City: Homel
     // First records, sorted by date
     // Experience 1-3 years
     private const string _url = @"https://rabota.by/search/vacancy?area=1003&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&experience=between1And3&text=c%23&L_save_area=true";
-   
-    public static ObservableCollection<Job> GetJobsWithLinks()
+
+    private MainWindowViewModel _mainWindowViewModel;
+
+    public ScrapeCommand(MainWindowViewModel mainWindowViewModel)
+    {
+        _mainWindowViewModel = mainWindowViewModel;
+    }
+
+    public bool CanExecute(object? parameter)
+    {
+        return true;
+    }
+
+    public void Execute(object? parameter)
     {
         var web = new HtmlWeb();
         var doc = web.Load(_url);
@@ -29,6 +46,6 @@ public class Scraper
             string link = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").GetAttributeValue("href", "");
             jobs.Add(new(title, company, link));
         }
-        return new ObservableCollection<Job>(jobs);
+        _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
     }
 }

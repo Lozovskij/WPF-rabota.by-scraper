@@ -1,12 +1,8 @@
 ﻿using RabotaScraper.Commands;
 using RabotaScraper.Models;
-using RabotaScraper.Models.Services;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Security.Policy;
-using System.Windows.Automation;
 using System.Windows.Input;
 
 namespace RabotaScraper.ViewModels;
@@ -30,7 +26,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     public MainWindowViewModel()
     {
-        ScrapeCommand = new RelayCommand(Scrape, CanScrape);
+        ScrapeCommand = new ScrapeCommand(this);
         OpenLinkCommand = new RelayCommand(OpenLink, CanOpenLink);
     }
 
@@ -43,16 +39,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         var url = (string)obj;
         Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-    }
-
-    private bool CanScrape(object obj)
-    {
-        return true;
-    }
-
-    private void Scrape(object obj)
-    {
-        Jobs = Scraper.GetJobsWithLinks();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
