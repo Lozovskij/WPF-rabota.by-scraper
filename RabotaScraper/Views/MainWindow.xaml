@@ -7,22 +7,32 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="500">
     <Grid>
-        <Button Command="{Binding ScrapeCommand}" Height="30" Content="Scrape" Width="100" VerticalContentAlignment="Center" Padding="5" Margin="25" VerticalAlignment="Top" />
-        <ListView Name="JobsList" ItemsSource="{Binding Jobs}" BorderBrush="#cdcdcd" Margin="25,70,25,25" Padding="0">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Title}" Header="Title"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Company}" Header="Company"/>
-                    <GridViewColumn Header="Link">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Open in browser" Command="{Binding OpenLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                CommandParameter="{Binding Link}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <TextBlock Text="Select scrape option:" Margin="10,10,10,5" />
+            <ComboBox Margin="10" Padding="5" ItemsSource="{Binding ScrapeOptions}"  SelectedItem="{Binding SelectedScrapeOption}" />
+            <Button Command="{Binding ScrapeCommand}" CommandParameter="{Binding SelectedScrapeOption}" Height="50" Content="Scrape" VerticalContentAlignment="Center" Padding="5" Margin="10,5" VerticalAlignment="Top" />
+            <ListView Name="JobsList" ItemsSource="{Binding Jobs}" BorderBrush="#cdcdcd" Margin="10" Padding="0">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding Title}" Header="Title"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Company}" Header="Company"/>
+                        <GridViewColumn Header="Link">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Open in browser" Command="{Binding OpenLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                    CommandParameter="{Binding Link}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>
     </Grid>
 </Window>

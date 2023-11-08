@@ -2,6 +2,7 @@
 using RabotaScraper.Models;
 using RabotaScraper.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -12,11 +13,11 @@ public class ScrapeCommand : ICommand
 {
     public event EventHandler? CanExecuteChanged;
 
-    // Search by keyword "c#"
-    // City: Homel
-    // First records, sorted by date
-    // Experience 1-3 years
-    private const string _url = @"https://rabota.by/search/vacancy?area=1003&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&experience=between1And3&text=c%23&L_save_area=true";
+    public static Dictionary<string, string> UrlMaps { get; set; } = new Dictionary<string, string>()
+    {
+        { "c#, 1-3 years, Homel" , @"https://rabota.by/search/vacancy?area=1003&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&experience=between1And3&text=c%23&L_save_area=true" },
+        { "wpf, 1-3 years, Minsk", @"https://rabota.by/search/vacancy?text=wpf&salary=&ored_clusters=true&order_by=publication_time&experience=between1And3&area=1002&hhtmFrom=vacancy_search_list" }
+    };
 
     private MainWindowViewModel _mainWindowViewModel;
 
@@ -32,8 +33,11 @@ public class ScrapeCommand : ICommand
 
     public void Execute(object? parameter)
     {
+        if (parameter == null) return;
+        var url = UrlMaps[(string)parameter];
+
         var web = new HtmlWeb();
-        var doc = web.Load(_url);
+        var doc = web.Load(url);
 
         var jobsNodes = doc.DocumentNode.SelectNodes("//div[@class='serp-item']");
 
