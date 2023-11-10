@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RabotaScraper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="500">
+        Title="MainWindow" Height="450" Width="700">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -17,15 +17,17 @@
             <TextBlock Text="Select scrape option:" Margin="10,10,10,5" />
             <ComboBox Margin="10" Padding="5" ItemsSource="{Binding ScrapeOptions}"  SelectedItem="{Binding SelectedScrapeOption}" />
             <Button Command="{Binding ScrapeCommand}" CommandParameter="{Binding SelectedScrapeOption}" Height="50" Content="Scrape" VerticalContentAlignment="Center" Padding="5" Margin="10,5" VerticalAlignment="Top" />
-            <ListView Name="JobsList" ItemsSource="{Binding Jobs}" BorderBrush="#cdcdcd" Margin="10" Padding="0">
+
+            <ListView Name="JobsList" ItemsSource="{Binding Jobs}" BorderBrush="#cdcdcd" Height="250" Margin="10" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn DisplayMemberBinding="{Binding Title}" Header="Title"/>
                         <GridViewColumn DisplayMemberBinding="{Binding Company}" Header="Company"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding City}" Header="City"/>
                         <GridViewColumn Header="Link">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Open in browser" Command="{Binding OpenLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                    <Button Content="Open in browser" Command="{Binding DataContext.OpenLinkCommand, ElementName=JobsList }"
                                     CommandParameter="{Binding Link}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -33,6 +35,7 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+
         </StackPanel>
     </Grid>
 </Window>

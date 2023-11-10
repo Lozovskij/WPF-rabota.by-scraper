@@ -16,7 +16,10 @@ public class ScrapeCommand : ICommand
     public static Dictionary<string, string> UrlMaps { get; set; } = new Dictionary<string, string>()
     {
         { "c#, 1-3 years, Homel" , @"https://rabota.by/search/vacancy?area=1003&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&experience=between1And3&text=c%23&L_save_area=true" },
-        { "wpf, 1-3 years, Minsk", @"https://rabota.by/search/vacancy?text=wpf&salary=&ored_clusters=true&order_by=publication_time&experience=between1And3&area=1002&hhtmFrom=vacancy_search_list" }
+        { "c#, 1-3 years, Homel/Minsk", @"https://rabota.by/search/vacancy?area=1003&area=1002&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&experience=between1And3&text=c%23"},
+        { "angular, 0 years, Homel", @"https://rabota.by/search/vacancy?ored_clusters=true&order_by=publication_time&area=1003&hhtmFrom=vacancy_search_list&experience=noExperience&professional_role=96&search_field=name&search_field=company_name&search_field=description&text=angular&enable_snippets=false&L_save_area=true" },
+        { "angular .net, 1-3 years, Homel/Minsk", @"https://rabota.by/search/vacancy?ored_clusters=true&order_by=publication_time&area=1002&area=1003&hhtmFrom=vacancy_search_list&experience=between1And3&professional_role=96&search_field=name&search_field=company_name&search_field=description&text=angular+.net&enable_snippets=false"},
+        { "angular .net, 0 years, Homel/Minsk", @"https://rabota.by/search/vacancy?area=1002&area=1003&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&experience=noExperience&professional_role=96&text=angular+.net" },
     };
 
     private MainWindowViewModel _mainWindowViewModel;
@@ -43,12 +46,19 @@ public class ScrapeCommand : ICommand
 
         var jobs = new List<Job>();
 
+        if (jobsNodes == null)
+        {
+            _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
+            return;
+        }
+
         foreach (var node in jobsNodes)
         {
             string title = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").InnerText.Trim();
             string company = node.SelectSingleNode(".//a[contains(@class,'bloko-link bloko-link_kind-tertiary')]").InnerText.Trim();
             string link = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").GetAttributeValue("href", "");
-            jobs.Add(new(title, company, link));
+            string city = node.SelectSingleNode(".//div[@data-qa='vacancy-serp__vacancy-address']").InnerText.Trim();
+            jobs.Add(new(title, company, city, link));
         }
         _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
     }
