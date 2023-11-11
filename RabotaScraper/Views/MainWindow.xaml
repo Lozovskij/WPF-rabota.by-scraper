@@ -21,9 +21,9 @@
             <ListView Name="JobsList" ItemsSource="{Binding Jobs}" BorderBrush="#cdcdcd" Height="250" Margin="10" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn DisplayMemberBinding="{Binding Title}" Header="Title"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Company}" Header="Company"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding City}" Header="City"/>
+                        <GridViewColumn Width="200" DisplayMemberBinding="{Binding Title}" Header="Title"/>
+                        <GridViewColumn Width="200" DisplayMemberBinding="{Binding Company}" Header="Company"/>
+                        <GridViewColumn Width="150" DisplayMemberBinding="{Binding City}" Header="City"/>
                         <GridViewColumn Header="Link">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
