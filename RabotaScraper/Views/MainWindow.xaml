@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RabotaScraper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="700">
+        Title="MainWindow" Height="600" Width="750">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -13,29 +13,32 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <StackPanel>
-            <TextBlock Text="Select scrape option:" Margin="10,10,10,5" />
-            <ComboBox Margin="10" Padding="5" ItemsSource="{Binding ScrapeOptions}"  SelectedItem="{Binding SelectedScrapeOption}" />
-            <Button Command="{Binding ScrapeCommand}" CommandParameter="{Binding SelectedScrapeOption}" Height="50" Content="Scrape" VerticalContentAlignment="Center" Padding="5" Margin="10,5" VerticalAlignment="Top" />
-
-            <ListView Name="JobsList" ItemsSource="{Binding Jobs}" BorderBrush="#cdcdcd" Height="250" Margin="10" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Width="200" DisplayMemberBinding="{Binding Title}" Header="Title"/>
-                        <GridViewColumn Width="200" DisplayMemberBinding="{Binding Company}" Header="Company"/>
-                        <GridViewColumn Width="150" DisplayMemberBinding="{Binding City}" Header="City"/>
-                        <GridViewColumn Header="Link">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Open in browser" Command="{Binding DataContext.OpenLinkCommand, ElementName=JobsList }"
-                                    CommandParameter="{Binding Link}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-
-        </StackPanel>
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Text="Select scrape option:" Margin="10,10,10,5" />
+            <ComboBox DockPanel.Dock="Top" Margin="10" Padding="5" ItemsSource="{Binding ScrapeOptions}"  SelectedItem="{Binding SelectedScrapeOption}" />
+            <Button DockPanel.Dock="Top" Command="{Binding ScrapeCommand}" CommandParameter="{Binding SelectedScrapeOption}" Height="50" Content="Scrape" VerticalContentAlignment="Center" Padding="5" Margin="10,5" VerticalAlignment="Top" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ListView Name="JobsList" ItemsSource="{Binding Jobs}" BorderBrush="#cdcdcd" Margin="10" Padding="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="200" DisplayMemberBinding="{Binding Title}" Header="Title"/>
+                            <GridViewColumn Width="200" DisplayMemberBinding="{Binding Company}" Header="Company"/>
+                            <GridViewColumn Width="150" DisplayMemberBinding="{Binding City}" Header="City"/>
+                            <GridViewColumn Header="Link">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Open in browser" Command="{Binding DataContext.OpenLinkCommand, ElementName=JobsList }"
+CommandParameter="{Binding Link}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>
