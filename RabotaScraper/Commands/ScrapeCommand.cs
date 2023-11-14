@@ -5,12 +5,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace RabotaScraper.Commands;
 
 public class ScrapeCommand : ICommand
 {
+    private bool _isExecuting;
+
+    public bool IsExecuting
+    {
+        get
+        {
+            return _isExecuting;
+        }
+        set
+        {
+            _isExecuting = value;
+            CanExecuteChanged?.Invoke(this, new EventArgs());
+        }
+    }
+
     public event EventHandler? CanExecuteChanged;
 
     public static Dictionary<string, string> UrlMaps { get; set; } = new Dictionary<string, string>()
@@ -31,35 +47,52 @@ public class ScrapeCommand : ICommand
 
     public bool CanExecute(object? parameter)
     {
-        return true;
+        return !IsExecuting;
     }
 
-    public void Execute(object? parameter)
+    public async void Execute(object? parameter)
     {
-        if (parameter == null) return;
-        var url = UrlMaps[(string)parameter];
-
-        var web = new HtmlWeb();
-        var doc = web.Load(url);
-
-        var jobsNodes = doc.DocumentNode.SelectNodes("//div[@class='serp-item']");
-
-        var jobs = new List<Job>();
-
-        if (jobsNodes == null)
+        IsExecuting = true;
+        try
         {
-            _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
-            return;
-        }
+            await Task.Run(() =>
+            {
+                if (parameter == null) return;
+                var url = UrlMaps[(string)parameter];
 
-        foreach (var node in jobsNodes)
-        {
-            string title = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").InnerText.Trim();
-            string company = node.SelectSingleNode(".//a[contains(@class,'bloko-link bloko-link_kind-tertiary')]").InnerText.Trim();
-            string link = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").GetAttributeValue("href", "");
-            string city = node.SelectSingleNode(".//div[@data-qa='vacancy-serp__vacancy-address']").InnerText.Trim();
-            jobs.Add(new(title, company, city, link));
+                var web = new HtmlWeb();
+                var doc = web.Load(url);
+
+                var jobsNodes = doc.DocumentNode.SelectNodes("//div[@class='serp-item']");
+
+                var jobs = new List<Job>();
+
+                if (jobsNodes == null)
+                {
+                    _mainWindowViewModel.ScrapeStatusMessage = "No jobs found";
+                    _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
+                    return;
+                }
+
+                foreach (var node in jobsNodes)
+                {
+                    string title = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").InnerText.Trim();
+                    string company = node.SelectSingleNode(".//a[contains(@class,'bloko-link bloko-link_kind-tertiary')]").InnerText.Trim();
+                    string link = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").GetAttributeValue("href", "");
+                    string city = node.SelectSingleNode(".//div[@data-qa='vacancy-serp__vacancy-address']").InnerText.Trim();
+                    jobs.Add(new(title, company, city, link));
+                }
+                _mainWindowViewModel.ScrapeStatusMessage = "Success!";
+                _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
+            });
         }
-        _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
+        catch (Exception ex)
+        {
+            _mainWindowViewModel.ScrapeStatusMessage = ex.Message;
+        }
+        finally
+        {
+            IsExecuting = false;
+        }
     }
 }

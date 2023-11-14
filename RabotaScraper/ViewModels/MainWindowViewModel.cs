@@ -13,6 +13,17 @@ public class MainWindowViewModel : INotifyPropertyChanged
 {
     private ObservableCollection<Job> _jobs;
     private string _selectedScrapeOption;
+    private string _scrapeStatusMessage;
+
+    public string ScrapeStatusMessage
+    {
+        get { return _scrapeStatusMessage; }
+        set
+        {
+            _scrapeStatusMessage = value;
+            OnPropertyChanged(nameof(ScrapeStatusMessage));
+        }
+    }
 
     public ObservableCollection<Job> Jobs
     {
