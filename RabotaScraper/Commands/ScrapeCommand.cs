@@ -31,11 +31,10 @@ public class ScrapeCommand : ICommand
 
     public static Dictionary<string, string> UrlMaps { get; set; } = new Dictionary<string, string>()
     {
-        { "c#, 1-3 years, Homel" , @"https://rabota.by/search/vacancy?area=1003&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&experience=between1And3&text=c%23&L_save_area=true" },
-        { "c#, 1-3 years, Homel/Minsk", @"https://rabota.by/search/vacancy?area=1003&area=1002&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&experience=between1And3&text=c%23"},
-        { "angular, 0 years, Homel", @"https://rabota.by/search/vacancy?ored_clusters=true&order_by=publication_time&area=1003&hhtmFrom=vacancy_search_list&experience=noExperience&professional_role=96&search_field=name&search_field=company_name&search_field=description&text=angular&enable_snippets=false&L_save_area=true" },
-        { "angular .net, 1-3 years, Homel/Minsk", @"https://rabota.by/search/vacancy?ored_clusters=true&order_by=publication_time&area=1002&area=1003&hhtmFrom=vacancy_search_list&experience=between1And3&professional_role=96&search_field=name&search_field=company_name&search_field=description&text=angular+.net&enable_snippets=false"},
-        { "angular .net, 0 years, Homel/Minsk", @"https://rabota.by/search/vacancy?area=1002&area=1003&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&experience=noExperience&professional_role=96&text=angular+.net" },
+        { "c#, Homel", @"https://rabota.by/search/vacancy?area=1003&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&text=c%23" },
+        { "c#, Minsk", @"https://rabota.by/search/vacancy?area=1002&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&text=c%23" },
+        { "angular, Homel", @"https://rabota.by/search/vacancy?ored_clusters=true&order_by=publication_time&area=1003&hhtmFrom=vacancy_search_list&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&text=angular" },
+        { "angular, Minsk", @"https://rabota.by/search/vacancy?ored_clusters=true&order_by=publication_time&area=1002&hhtmFrom=vacancy_search_list&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&text=angular" },
     };
 
     private MainWindowViewModel _mainWindowViewModel;
@@ -55,6 +54,7 @@ public class ScrapeCommand : ICommand
         IsExecuting = true;
         try
         {
+            _mainWindowViewModel.ScrapeStatusMessage = "Loading...";
             await Task.Run(() =>
             {
                 if (parameter == null) return;
@@ -74,13 +74,19 @@ public class ScrapeCommand : ICommand
                     return;
                 }
 
+                var excludeStr = "Опыт ";
                 foreach (var node in jobsNodes)
                 {
                     string title = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").InnerText.Trim();
                     string company = node.SelectSingleNode(".//a[contains(@class,'bloko-link bloko-link_kind-tertiary')]").InnerText.Trim();
                     string link = node.SelectSingleNode(".//a[contains(@class,'serp-item__title')]").GetAttributeValue("href", "");
                     string city = node.SelectSingleNode(".//div[@data-qa='vacancy-serp__vacancy-address']").InnerText.Trim();
-                    jobs.Add(new(title, company, city, link));
+                    string experience = node.SelectSingleNode(".//div[@data-qa='vacancy-serp__vacancy-work-experience']").InnerText.Trim();
+
+                    experience = experience.Contains(excludeStr) ? experience.Replace(excludeStr, "") : experience;
+                    city = city.Split(new char[] { ',', ' ' })[0];
+                    
+                    jobs.Add(new(title, company, city, experience, link));
                 }
                 _mainWindowViewModel.ScrapeStatusMessage = "Success!";
                 _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RabotaScraper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="750">
+        Title="MainWindow" Height="600" Width="770">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -27,7 +27,8 @@
                         <GridView>
                             <GridViewColumn Width="200" DisplayMemberBinding="{Binding Title}" Header="Title"/>
                             <GridViewColumn Width="200" DisplayMemberBinding="{Binding Company}" Header="Company"/>
-                            <GridViewColumn Width="150" DisplayMemberBinding="{Binding City}" Header="City"/>
+                            <GridViewColumn Width="120" DisplayMemberBinding="{Binding Experience}" Header="Experience"/>
+                            <GridViewColumn Width="80" DisplayMemberBinding="{Binding City}" Header="City"/>
                             <GridViewColumn Header="Link">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
