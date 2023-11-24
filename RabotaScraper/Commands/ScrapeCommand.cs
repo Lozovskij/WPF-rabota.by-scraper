@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using RabotaScraper.Models;
+using RabotaScraper.Stores;
 using RabotaScraper.ViewModels;
 using System;
 using System.Collections;
@@ -35,13 +36,16 @@ public class ScrapeCommand : ICommand
         { "c#, Minsk", @"https://rabota.by/search/vacancy?area=1002&ored_clusters=true&order_by=publication_time&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&text=c%23" },
         { "angular, Homel", @"https://rabota.by/search/vacancy?ored_clusters=true&order_by=publication_time&area=1003&hhtmFrom=vacancy_search_list&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&text=angular" },
         { "angular, Minsk", @"https://rabota.by/search/vacancy?ored_clusters=true&order_by=publication_time&area=1002&hhtmFrom=vacancy_search_list&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true&text=angular" },
+        { "IT, no experience", @"https://rabota.by/search/vacancy?area=16&ored_clusters=true&order_by=publication_time&disableBrowserCache=true&hhtmFrom=vacancy_search_list&experience=noExperience&professional_role=96&search_field=name&search_field=company_name&search_field=description&enable_snippets=false&L_save_area=true" },
     };
 
     private MainWindowViewModel _mainWindowViewModel;
+    private readonly JobStore _jobStore;
 
-    public ScrapeCommand(MainWindowViewModel mainWindowViewModel)
+    public ScrapeCommand(MainWindowViewModel mainWindowViewModel, JobStore jobStore)
     {
         _mainWindowViewModel = mainWindowViewModel;
+        _jobStore = jobStore;
     }
 
     public bool CanExecute(object? parameter)
@@ -70,7 +74,7 @@ public class ScrapeCommand : ICommand
                 if (jobsNodes == null)
                 {
                     _mainWindowViewModel.ScrapeStatusMessage = "No jobs found";
-                    _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
+                    _jobStore.InvokeJobsScraped(jobs);
                     return;
                 }
 
@@ -89,7 +93,7 @@ public class ScrapeCommand : ICommand
                     jobs.Add(new(title, company, city, experience, link));
                 }
                 _mainWindowViewModel.ScrapeStatusMessage = "Success!";
-                _mainWindowViewModel.Jobs = new ObservableCollection<Job>(jobs);
+                _jobStore.InvokeJobsScraped(jobs);
             });
         }
         catch (Exception ex)

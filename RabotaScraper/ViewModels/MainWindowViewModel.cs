@@ -1,6 +1,7 @@
 ﻿using RabotaScraper.Commands;
 using RabotaScraper.Models;
-using System;
+using RabotaScraper.Stores;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -50,12 +51,20 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public ICommand ScrapeCommand { get; set; }
     public ICommand OpenLinkCommand { get; set; }
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(JobStore jobStore)
     {
-        ScrapeCommand = new ScrapeCommand(this);
+        jobStore.JobsScraped += OnJobsScraped;
+        //TODO
+        //jobStore.JobsScraped += repository.SaveNewJobs;
+        ScrapeCommand = new ScrapeCommand(this, jobStore);
         OpenLinkCommand = new RelayCommand(OpenLink, CanOpenLink);
         ScrapeOptions = new ObservableCollection<string>(Commands.ScrapeCommand.UrlMaps.Keys.ToArray());
         SelectedScrapeOption = Commands.ScrapeCommand.UrlMaps.Keys.First();
+    }
+
+    private void OnJobsScraped(IEnumerable<Job> jobs)
+    {
+        Jobs = new ObservableCollection<Job>(jobs);
     }
 
     private bool CanOpenLink(object obj)
